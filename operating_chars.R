@@ -113,8 +113,6 @@ s_model <- function(generated_data, mod) {
 
 s_replicate <- function(argsvec, mod) {
   
-  set_cmdstan_path(path = "/gpfs/share/apps/cmdstan/2.34.1")
-  
   list_of_defs <- s_define()
   generated_data <- s_generate(list_of_defs, argsvec)
   model_results_1 <- s_model(generated_data, mod[[1]])
@@ -190,10 +188,10 @@ scenarios <- lapply(1:4,
 
 scenarios <- rep(scenarios, each = 400)
 
-mod1 <- cmdstan_model("bayes_hpc_1level.stan")
-mod2 <- cmdstan_model("bayes_hpc_2level.stan")
+modS <- cmdstan_model("model_S.stan")
+modQ <- cmdstan_model("model_Q.stan")
 
-summary_stats <- lapply(scenarios, function(a) s_replicate(a, list(mod1, mod2)))
+summary_stats <- lapply(scenarios, function(a) s_replicate(a, list(modS, modQ)))
 
 
 
