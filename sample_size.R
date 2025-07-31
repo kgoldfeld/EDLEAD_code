@@ -281,33 +281,31 @@ sum_sd_x <- res_sd_x[, .(sd = mean(sd)), keyby = n_ed]
 #' Visualizes the relationship between number of clusters and precision
 #' of interaction effect estimates. The horizontal line at 0.13 represents
 #' a precision target (somewhat arbitrary but represents "adequate precision").
+#' 
 
-p40_x <- ggplot() +
+p40 <- ggplot() +
+  
   # Reference line for precision target  
   geom_hline(yintercept = 0.13, size = .5, color = "grey80") +
   
-  # Individual Monte Carlo results (jittered points)
-  geom_jitter(data = res_sd_x, aes(x = n_ed, y = sd), 
-              width = .5, color = "grey75", size = .4) +
-  
-  # Average precision trend line
-  geom_line(data = sum_sd_x, aes(x = n_ed, y = sd), size = 1) +
+  # Individual Monte Carlo results (boxplot)
+  geom_boxplot(data = res_sd_x, aes(group = n_ed, y = sd, x = n_ed), 
+               width = 2, outliers = FALSE, color = "grey50", fill = "grey80") +
   
   # Formatting
-  scale_x_continuous(limits = c(45, 91), 
-                     breaks = seq(48, 88, by = 8), 
-                     name = "number of EDs") +
-  scale_y_continuous(limits = c(0.05, 0.25), 
-                     breaks = c(.13, seq(0.05, .25, by = .05)), 
-                     name = "sd of posterior distribution") +
+  scale_x_continuous(limits = c(45, 91), breaks = seq(48, 88, by = 8), name = "number of EDs") +
+  scale_y_continuous(limits = c(0.05, 0.25), breaks = c(.13, seq(0.05, .25, by = .05)), 
+                     name ="sd of posterior distribution") +
   theme(panel.grid = element_blank(),  
         plot.title = element_text(size = 12, face = "bold"),
-        axis.title = element_text(size = 14),
-        axis.text = element_text(size = 12)) +
+        axis.title = element_text(size = 11),
+        #       axis.title = element_blank(),
+        axis.text = element_text(size = 12)
+  ) +
   ggtitle("Multiple intervention/40 patients per month")
 
 # Display results
-print(p40_x)
+print(p40)
 
 # =============================================================================
 # INTERPRETATION AND SAMPLE SIZE RECOMMENDATION
