@@ -181,7 +181,7 @@ n_quarters <- 2                   # Number of time periods per cluster
 n_quarter <- c(60, 90, 190, 300)  # Expected observations per quarter by group
 
 # Model parameters
-t_0 <- -0.85                 # Intercept (log-odds scale)
+t_0 <- -0.40                 # Intercept (log-odds scale)
 t_a <- t_b <- t_c <- 0       # Main effect parameters (null hypothesis)
 x_ab <- x_ac <- x_bc <- 0    # Two-way interaction parameters (null)
 x_abc <- 0                   # Three-way interaction parameter (null)
