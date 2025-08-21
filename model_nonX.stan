@@ -13,13 +13,13 @@
  * - No non-centered parameterization needed
  * 
  * Model Structure:
- * logit(P(y_i = 1)) = α_j[i] + τ_a*A_i + τ_b*B_i + τ_c*C_i + 
- *                     τ_ab*A_i*B_i + τ_ac*A_i*C_i + τ_bc*B_i*C_i + τ_abc*A_i*B_i*C_i
+ * logit(P(y_i = 1)) = alpha_j[i] + tau_a*A_i + tau_b*B_i + tau_c*C_i + 
+ *                     tau_ab*A_i*B_i + tau_ac*A_i*C_i + tau_bc*B_i*C_i + tau_abc*A_i*B_i*C_i
  * 
  * 
  * Prior Structure:
- * τ_k ~ Normal(0, σ_τ) for k = a,...,abc, σ_τ is user-specified
- * α_j ~ Normal(0, σ_α) for j = 1,...,J , σ_α is user-specified
+ * tau_k ~ Normal(0, simga_tau) for k = a,...,abc, simga_tau is user-specified
+ * alpha_j ~ Normal(0, simga_alpha) for j = 1,...,J , simga_alpha is user-specified
  * 
  * Use Cases:
  * - When you want to treat all treatment effects as equally likely a priori
@@ -44,7 +44,7 @@ data {
   // Prior hyperparameters (passed from R)
   array[6] real svals;              // Vector of prior scale parameters:
                                     // [1-4] unused (for compatibility with HEx model)
-                                    // [5] sigma_sigma_ed: scale for σ_α prior (cluster effects)
+                                    // [5] sigma_sigma_ed: scale for simga_alpha prior (cluster effects)
                                     // [6] sigma_tau: scale for treatment effect priors
   
 }
@@ -61,14 +61,14 @@ parameters {
    */
   
   // Treatment effect coefficients (all treated identically)
-  vector[8] tau;                    // [τ₀, τ₁, τ₂, τ₃, τ₄, τ₅, τ₆, τ₇]
-                                    // τ₀: Intercept
-                                    // τ₁-τ₃: Main effects (A, B, C)
-                                    // τ₄-τ₆: Two-way interactions (AB, AC, BC)
-                                    // τ₇: Three-way interaction (ABC)
+  vector[8] tau;                    // [tau_0, tau_1, tau_2, tau_3, tau_4, tau_5, tau_6, tau_7]
+                                    // tau_0: Intercept
+                                    // tau_1-tau_3: Main effects (A, B, C)
+                                    // tau_4-tau_6: Two-way interactions (AB, AC, BC)
+                                    // tau_7: Three-way interaction (ABC)
   
   // Cluster-level random effects (identical to HEx model)
-  vector[N_ED] ed_effect;           // Random intercepts for each cluster (α_j)
+  vector[N_ED] ed_effect;           // Random intercepts for each cluster (alpha_j)
   real<lower=0> sigma_ed;           // Standard deviation of cluster effects
   
 }
@@ -79,7 +79,7 @@ model {
    * Prior Specifications
    * 
    * This model uses a much simpler prior structure compared to the HEx model:
-   * - All treatment effects have identical Normal(0, σ_τ) priors
+   * - All treatment effects have identical Normal(0, simga_tau) priors
    * - No distinction between main effects and interactions
    * - No hierarchical borrowing of strength across effect types
    */
@@ -89,14 +89,14 @@ model {
   sigma_ed ~ student_t(3, 0, svals[5]);  // Scale for cluster variation
   
   // Treatment effects: all coefficients treated identically
-  // Note: This includes the intercept tau[1], which gets Normal(0, σ_τ) prior
+  // Note: This includes the intercept tau[1], which gets Normal(0, simga_tau) prior
   tau ~ normal(0, svals[6]);             // Common prior for all treatment effects
   
   /*
    * Likelihood (identical to HEx model)
    * 
    * Logistic regression with cluster random effects:
-   * logit(P(y_i = 1)) = α_j[i] + X_i * τ
+   * logit(P(y_i = 1)) = alpha_j[i] + X_i * tau
    */
   y ~ bernoulli_logit(ed_effect[ed] + x_abc * tau);
   

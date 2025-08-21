@@ -104,7 +104,7 @@ s_bayes <- function(generated_data, mod, argsvec) {
       var = var(value),                        # Posterior variance
       p_less_zero = mean(value < 0),           # Probability of negative effect
       p_meaningful = mean(value < -0.223)      # Probability of meaningful effect
-      # (log(0.8) ≈ -0.223 corresponds to OR < 0.8)
+      # (log(0.8) = -0.223 corresponds to OR < 0.8)
     ), keyby = variable]
   
   return(sumbayes)  # Return posterior summary table

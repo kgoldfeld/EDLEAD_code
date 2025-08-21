@@ -136,7 +136,7 @@ s_bayes <- function(generated_data, mod, argsvec) {
 #'   }
 #'
 #' @details The function fits five nested models and uses sequential likelihood
-#'   ratio tests (LRT) with α = 0.05 to determine model complexity:
+#'   ratio tests (LRT) with $\alpha$ = 0.05 to determine model complexity:
 #'   \enumerate{
 #'     \item Test main effects vs null model
 #'     \item If significant, test 2-way interactions vs main effects
@@ -322,9 +322,9 @@ grp4 <- grp4 * ratio
 # OR for single intervention: 0.80, OR for 2 interventions: 0.70
 
 t_0 <- -0.40      # Baseline log-odds (approximately 40% control rate)
-t_a <- -0.20      # Main effect A (OR ≈ 0.82)
+t_a <- -0.20      # Main effect A (OR = 0.82)
 t_b <- 0          # Main effect B (null)
-t_c <- -0.20      # Main effect C (OR ≈ 0.82)
+t_c <- -0.20      # Main effect C (OR = 0.82)
 x_ab <- 0         # A×B interaction (null)
 x_ac <- 0.05      # A×C interaction (small positive)
 x_bc <- 0         # B×C interaction (null)

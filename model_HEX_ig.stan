@@ -7,18 +7,18 @@
  * specifying prior beliefs about the scale of treatment effect heterogeneity.
  * 
  * Key Differences from Standard HEx Model:
- * - Inverse gamma priors on variance parameters (σ²) instead of Student-t on SD (σ)
+ * - Inverse gamma priors on variance parameters (sigma²) instead of Student-t on SD (sigma)
  * - Non-centered parameterization with variance-based transformation
  * - Direct variance estimation with derived standard deviations
  * 
  * Model Structure (identical to HEx):
- * logit(P(y_i = 1)) = α_j[i] + τ_a*A_i + τ_b*B_i + τ_c*C_i + 
- *                     τ_ab*A_i*B_i + τ_ac*A_i*C_i + τ_bc*B_i*C_i + τ_abc*A_i*B_i*C_i
+ * logit(P(y_i = 1)) = alpha_j[i] + tau_a*A_i + tau_b*B_i + tau_c*C_i + 
+ *                     tau_ab*A_i*B_i + tau_ac*A_i*C_i + tau_bc*B_i*C_i + tau_abc*A_i*B_i*C_i
  * 
  * Prior Structure:
- * σ²_main ~ InverseGamma(α₁, β₁)     [Variance for main effects]
- * σ²_int ~ InverseGamma(α₂, β₂)      [Variance for interactions]  
- * σ²_cluster ~ InverseGamma(α₃, β₃)  [Variance for cluster effects]
+ * sigma²_main ~ InverseGamma(alpha_1, beta_1)     [Variance for main effects]
+ * sigma²_int ~ InverseGamma(alpha_2, beta_2)      [Variance for interactions]  
+ * sigma²_cluster ~ InverseGamma(alpha_3, beta_3)  [Variance for cluster effects]
  * 
  * Use Cases:
  * - When you have conjugate prior beliefs about variance parameters
@@ -42,12 +42,12 @@ data {
   
   // Prior hyperparameters for inverse gamma distributions
   array[6] real svals;              // Vector of inverse gamma parameters:
-                                    // [1] α₁: shape parameter for main effect variance
-                                    // [2] β₁: scale parameter for main effect variance
-                                    // [3] σ_τm: scale for main effect location prior
-                                    // [4] σ_τx: scale for interaction location prior
-                                    // [5] α₂: shape parameter for cluster variance
-                                    // [6] β₂: scale parameter for cluster variance
+                                    // [1] alpha_1: shape parameter for main effect variance
+                                    // [2] beta_1: scale parameter for main effect variance
+                                    // [3] sigma_taum: scale for main effect location prior
+                                    // [4] sigma_taux: scale for interaction location prior
+                                    // [5] alpha_2: shape parameter for cluster variance
+                                    // [6] beta_2: scale parameter for cluster variance
                                     // Note: Uses same shape/scale for main & interaction variances
   
 }
@@ -57,8 +57,8 @@ parameters {
   /*
    * Non-Centered Parameterization with Variance Parameters
    * 
-   * This approach parameterizes the model in terms of variances (σ²) rather
-   * than standard deviations (σ), then derives SDs in transformed parameters.
+   * This approach parameterizes the model in terms of variances (sigma²) rather
+   * than standard deviations (sigma), then derives SDs in transformed parameters.
    * This can have different computational properties and prior implications.
    */
   
@@ -75,7 +75,7 @@ parameters {
   real<lower=0> var_ed;             // Variance of cluster random effects
   
   // Cluster-level random effects
-  vector[N_ED] ed_effect;           // Random intercepts for each cluster (α_j)
+  vector[N_ED] ed_effect;           // Random intercepts for each cluster (alpha_j)
   
 }
 
@@ -132,8 +132,8 @@ model {
    * Inverse Gamma Properties:
    * - Conjugate for normal likelihood variance parameters
    * - Right-skewed distribution (mass concentrated near zero)
-   * - Mean = β/(α-1) for α > 1
-   * - Mode = β/(α+1)
+   * - Mean = beta/(alpha-1) for alpha > 1
+   * - Mode = beta/(alpha+1)
    * - Can be more/less informative than Student-t depending on parameters
    */
   
@@ -218,9 +218,9 @@ generated quantities {
    * - You're comparing different prior families
    * 
    * Prior Elicitation for Inverse Gamma:
-   * - Shape α: controls concentration around mode
-   * - Scale β: controls location of distribution
-   * - Higher α = more concentrated around mode
+   * - Shape alpha: controls concentration around mode
+   * - Scale beta: controls location of distribution
+   * - Higher alpha = more concentrated around mode
    * - Consider prior predictive checks to validate choices
    * 
    * SENSITIVITY ANALYSIS:

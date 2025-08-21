@@ -10,14 +10,14 @@
  * - Binary outcomes with logistic regression
  * 
  * Model Structure:
- * logit(P(y_i = 1)) = α_j[i] + τ_a*A_i + τ_b*B_i + τ_c*C_i + 
- *                     τ_ab*A_i*B_i + τ_ac*A_i*C_i + τ_bc*B_i*C_i + τ_abc*A_i*B_i*C_i
+ * logit(P(y_i = 1)) = alpha_j[i] + tau_a*A_i + tau_b*B_i + tau_c*C_i + 
+ *                     tau_ab*A_i*B_i + tau_ac*A_i*C_i + tau_bc*B_i*C_i + tau_abc*A_i*B_i*C_i
  * 
  * where:
- * - α_j[i] is the random effect for cluster j containing individual i
- * - τ_a, τ_b, τ_c₃ are main effects for treatments A, B, C
- * - τ_ab, τ_ac, τ_bc are two-way interaction effects
- * - τ_abc is the three-way interaction effect
+ * - alpha_j[i] is the random effect for cluster j containing individual i
+ * - tau_a, tau_b, tau_c are main effects for treatments A, B, C
+ * - tau_ab, tau_ac, tau_bc are two-way interaction effects
+ * - tau_abc is the three-way interaction effect
  */
 
 data {
@@ -35,11 +35,11 @@ data {
   
   // Prior hyperparameters (passed from R)
   array[6] real svals;              // Vector of prior scale parameters:
-                                    // [1] sigma_sigma_m: scale for σ_m prior
-                                    // [2] sigma_sigma_x: scale for σ_x prior  
-                                    // [3] sigma_tau_m: scale for τ_m prior
-                                    // [4] sigma_tau_x: scale for τ_x prior
-                                    // [5] sigma_sigma_ed: scale for σ_α prior
+                                    // [1] sigma_sigma_m: scale for simga_m prior
+                                    // [2] sigma_sigma_x: scale for simga_x prior  
+                                    // [3] sigma_tau_m: scale for tau_m prior
+                                    // [4] sigma_tau_x: scale for tau_x prior
+                                    // [5] sigma_sigma_ed: scale for sigma_alpha prior
                                     // [6] sigma_3: scale for 3-way interaction (unused)
   
 }
@@ -58,7 +58,7 @@ parameters {
   real<lower=1e-6> sigma_x;         // Standard deviation of 2-way interactions around tau_x
   
   // Cluster-level random effects
-  vector[N_ED] ed_effect;           // Random intercepts for each cluster (α_j)
+  vector[N_ED] ed_effect;           // Random intercepts for each cluster (sigma_j)
   real<lower=1e-6> sigma_ed;        // Standard deviation of cluster effects
   
 }
@@ -73,14 +73,14 @@ transformed parameters {
    * between parameters and their scale parameters.
    * 
    * Coefficient interpretation:
-   * τ[1] = τ_₀    : Intercept (reference: no treatments)
-   * τ[2] = τ_a    : Main effect of treatment A
-   * τ[3] = τ_b    : Main effect of treatment B  
-   * τ[4] = τ_c    : Main effect of treatment C
-   * τ[5] = τ_ab   : Interaction effect A×B
-   * τ[6] = τ_ac   : Interaction effect A×C
-   * τ[7] = τ_bc   : Interaction effect B×C
-   * τ[8] = τ_abc  : Three-way interaction A×B×C
+   * tau[1] = tau_0    : Intercept (reference: no treatments)
+   * tau[2] = tau_a    : Main effect of treatment A
+   * tau[3] = tau_b    : Main effect of treatment B  
+   * tau[4] = tau_c    : Main effect of treatment C
+   * tau[5] = tau_ab   : Interaction effect A×B
+   * tau[6] = tau_ac   : Interaction effect A×C
+   * tau[7] = tau_bc   : Interaction effect B×C
+   * tau[8] = tau_abc  : Three-way interaction A×B×C
    */
   
   vector[8] tau;                    // Final regression coefficients
@@ -134,10 +134,10 @@ model {
    * Likelihood
    * 
    * Logistic regression with cluster random effects:
-   * logit(P(y_i = 1)) = α_j[i] + X_i * τ
+   * logit(P(y_i = 1)) = sigma_j[i] + X_i * tau
    * 
-   * where α_j[i] is the random effect for the cluster containing individual i
-   * and X_i * τ represents the linear combination of treatment effects
+   * where sigma_j[i] is the random effect for the cluster containing individual i
+   * and X_i * tau represents the linear combination of treatment effects
    */
   y ~ bernoulli_logit(ed_effect[ed] + x_abc * tau);
   
